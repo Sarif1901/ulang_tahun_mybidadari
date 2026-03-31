@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Ulang Tahun Ayang ❤️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Pacifico&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        .font-pacifico { font-family: 'Pacifico', cursive; }
+        .font-caveat { font-family: 'Caveat', cursive; }
+        
+        /* Animasi Transisi */
+        .fade-in { animation: fadeIn 1.5s ease-in-out forwards; }
+        .fade-out { animation: fadeOut 0.5s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Polaroid Style */
+        .polaroid {
+            background: #fff;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .polaroid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+        /* Efek hover untuk PC & touch untuk HP */
+        .polaroid:hover, .polaroid:active {
+            transform: scale(1.05) translateY(-10px) rotate(0deg) !important;
+            z-index: 50;
+            box-shadow: 0 15px 30px rgba(255, 105, 180, 0.6);
+        }
+        .polaroid-text {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: fixed;
+            top: -10vh;
+            color: #ff4d6d;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 5;
+            animation: fall linear forwards;
+            filter: drop-shadow(0 0 5px rgba(255, 77, 109, 0.5));
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 105, 180, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 105, 180, 0.8); }
+    </style>
+</head>
+<body class="relative h-screen w-screen bg-black text-white">
+
+    <!-- Container untuk Floating Hearts -->
+    <div id="hearts-container"></div>
+
+    <!-- Audio Background (HBD.mp3) -->
+    <audio id="bg-music" loop>
+        <source src="HBD.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Video Background (Di-mute agar tidak tabrakan dengan lagu HBD.mp3) -->
+    <video id="bg-video" autoplay loop muted playsinline class="fixed top-0 left-0 w-full h-full object-cover z-0">
+        <source src="WhatsApp Video 2026-03-31 at 06.39.47.mp4" type="video/mp4">
+    </video>
+
+    <!-- Overlay Gelap Dinamis -->
+    <div class="fixed top-0 left-0 w-full h-full bg-black/60 z-10 transition-colors duration-1000" id="overlay"></div>
+
+    <!-- ================= LAYAR INTRO ================= -->
+    <div id="intro-screen" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 md:px-6">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl max-w-sm w-full animate-pulse">
+            <h1 class="font-pacifico text-3xl mb-3 text-pink-300">Hai Ayang... ❤️</h1>
+            <p class="mb-8 text-gray-200 font-light text-sm md:text-base">Ada sesuatu yang spesial buat kamu hari ini.</p>
+            <button id="start-btn" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3 px-6 rounded-full shadow-[0_0_15px_rgba(255,105,180,0.6)] transition transform hover:scale-105 active:scale-95 w-full tracking-wide">
+                Buka Pesan & Play Musik 🎶
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= LAYAR UTAMA (UCAPAN) ================= -->
+    <div id="main-screen" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 opacity-0 transition-opacity duration-1000">
+        
+        <h1 class="font-pacifico text-4xl md:text-6xl mb-6 text-pink-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] fade-in">
+            Happy Birthday! 🎉
+        </h1>
+        
+        <div class="glass-panel p-6 md:p-10 rounded-3xl shadow-2xl max-w-lg w-full border-t border-l border-white/20 fade-in" style="animation-delay: 0.5s;">
+            <p class="text-base md:text-xl font-medium mb-4 drop-shadow-md leading-relaxed">
+                "Semoga panjang umur, sehat selalu, makin sayang, dan lancar terus rezekinya..."
+            </p>
+            
+            <div class="my-6 border-t border-white/20 w-3/4 mx-auto"></div>
+            
+            <p class="text-xl md:text-3xl font-bold text-pink-200 drop-shadow-[0_0_10px_rgba(255,192,203,0.8)] animate-pulse">
+                "Bismillah tahun sekarang nikah yaa... Aamiin" 💍🥰
+            </p>
+        </div>
+
+        <button id="to-gallery-btn" class="mt-8 fade-in bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/50 text-white font-semibold py-3 px-6 md:px-8 rounded-full shadow-[0_0_15px_rgba(255,105,180,0.4)] transition-all transform hover:scale-110 flex items-center gap-2" style="animation-delay: 1.5s;">
+            <span>Lihat Memori Kita</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-300" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- ================= LAYAR GALERI & SURAT ================= -->
+    <div id="gallery-screen" class="hidden absolute inset-0 z-30 flex flex-col items-center pt-8 px-4 pb-24 overflow-y-auto overflow-x-hidden opacity-0 transition-opacity duration-1000 bg-black/50 backdrop-blur-md">
+        
+        <!-- Header Galeri -->
+        <div class="w-full max-w-5xl flex justify-between items-center mb-8 px-2 fade-in relative">
+            <button id="back-btn" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white py-2 px-3 md:px-4 rounded-full backdrop-blur-md transition flex items-center gap-1 md:gap-2 text-sm md:text-base z-40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                <span class="hidden md:inline">Kembali</span>
+            </button>
+            <h2 class="font-pacifico text-2xl md:text-4xl text-pink-300 drop-shadow-lg absolute left-1/2 transform -translate-x-1/2 w-full text-center pointer-events-none">Memori Kita 💖</h2>
+        </div>
+
+        <!-- Grid Foto Polaroid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto w-full fade-in px-4" style="animation-delay: 0.3s;">
+            <!-- Foto 1 -->
+            <div class="polaroid transform -rotate-2">
+                <img src="IMG_6572.JPG.jpeg" alt="Memori 1" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+1'">
+                <p class="font-caveat polaroid-text">Momen indah ✨</p>
+            </div>
+            <!-- Foto 2 -->
+            <div class="polaroid transform rotate-3">
+                <img src="IMG_6573.JPG.jpeg" alt="Memori 2" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+2'">
+                <p class="font-caveat polaroid-text">Love you 💕</p>
+            </div>
+            <!-- Foto 3 -->
+            <div class="polaroid transform -rotate-1">
+                <img src="IMG_6592.jpg" alt="Memori 3" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+3'">
+                <p class="font-caveat polaroid-text">Kesayanganku 🥰</p>
+            </div>
+            <!-- Foto 4 -->
+            <div class="polaroid transform rotate-2">
+                <img src="IMG_6618.jpg" alt="Memori 4" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+4'">
+                <p class="font-caveat polaroid-text">Selalu bersama 💑</p>
+            </div>
+            <!-- Foto 5 -->
+            <div class="polaroid transform -rotate-3">
+                <img src="IMG_6619.jpg" alt="Memori 5" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+5'">
+                <p class="font-caveat polaroid-text">Cantiknya... 😍</p>
+            </div>
+            <!-- Foto 6 -->
+            <div class="polaroid transform rotate-1">
+                <img src="IMG_6623.jpg" alt="Memori 6" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+6'">
+                <p class="font-caveat polaroid-text">Tawa kita 😄</p>
+            </div>
+            <!-- Foto 7 -->
+            <div class="polaroid transform -rotate-2">
+                <img src="IMG_6624.jpg" alt="Memori 7" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+7'">
+                <p class="font-caveat polaroid-text">Gemesin 😜</p>
+            </div>
+            <!-- Foto 8 -->
+            <div class="polaroid transform rotate-2">
+                <img src="IMG_6625.jpg" alt="Memori 8" onerror="this.src='https://via.placeholder.com/400x500/ffb6c1/ffffff?text=Foto+8'">
+                <p class="font-caveat polaroid-text">Menuju Halal 💍</p>
+            </div>
+        </div>
+
+        <!-- ================= SURAT CINTA ================= -->
+        <div class="w-full max-w-4xl mx-auto mt-16 mb-10 fade-in px-4" style="animation-delay: 0.8s;">
+            <div class="glass-panel p-6 md:p-10 rounded-2xl shadow-2xl relative overflow-hidden">
+                <!-- Dekorasi -->
+                <div class="absolute -top-10 -right-10 text-pink-500/20 text-9xl font-serif">"</div>
+                
+                <h3 class="font-pacifico text-2xl md:text-3xl text-pink-300 mb-6 border-b border-pink-300/30 pb-4 inline-block">
+                    Selamat ulang tahun, sayang ❤️
+                </h3>
+                
+                <div class="space-y-4 text-gray-200 text-sm md:text-base leading-relaxed text-left md:text-justify relative z-10 font-light">
+                    <p>
+                        Hari ini aku bukan cuma merayakan bertambahnya usiamu, tapi juga semua perjalanan yang sudah kita lewati bersama. Dari awal kita saling mengenal, sampai akhirnya kita ada di titik ini—semuanya terasa begitu berarti buat aku.
+                    </p>
+                    <p>
+                        Aku selalu ingat obrolan-obrolan kita, tawa tanpa alasan, sampai momen sederhana yang mungkin terlihat biasa, tapi sebenarnya penuh makna. Dan dari semua itu, ada satu hal yang paling aku ingat… bagaimana kita sama-sama berjuang untuk satu tujuan: masa depan kita, untuk bisa bersama dalam ikatan yang halal.
+                    </p>
+                    <p>
+                        Aku tahu perjalanan ini gak selalu mudah. Ada lelah, ada ragu, ada keadaan yang kadang bikin kita harus lebih kuat dari biasanya. Tapi justru dari situ aku melihat betapa tulusnya kita saling menjaga dan memperjuangkan satu sama lain.
+                    </p>
+                    <p>
+                        Terima kasih sudah tetap bertahan, tetap percaya, dan tetap memilih aku di tengah semua proses ini.
+                    </p>
+                    <p>
+                        Di usia barumu, aku berdoa semoga langkah kita semakin dimudahkan. Semoga apa yang kita perjuangkan segera Allah izinkan terjadi. Lebih banyak kebahagiaan, lebih banyak kekuatan, dan semoga suatu hari nanti kita bisa melihat ke belakang sambil tersenyum, bangga karena kita tidak menyerah.
+                    </p>
+                </div>
+
+                <div class="mt-10 text-center relative z-10">
+                    <p class="font-caveat text-2xl md:text-4xl text-pink-300 leading-snug drop-shadow-md">
+                        "Aku sayang kamu, dan aku ingin terus berjalan bareng kamu… <br class="hidden md:block">
+                        sampai doa-doa kita benar-benar jadi nyata 🤍✨"
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-btn');
+            const toGalleryBtn = document.getElementById('to-gallery-btn');
+            const backBtn = document.getElementById('back-btn');
+            
+            const introScreen = document.getElementById('intro-screen');
+            const mainScreen = document.getElementById('main-screen');
+            const galleryScreen = document.getElementById('gallery-screen');
+            
+            const bgVideo = document.getElementById('bg-video');
+            const bgMusic = document.getElementById('bg-music');
+            const overlay = document.getElementById('overlay');
+
+            let musicStarted = false;
+
+            // --- Fungsi Transisi Layar ---
+            function switchScreen(hideScreen, showScreen, overlayClassRemove, overlayClassAdd) {
+                hideScreen.classList.remove('opacity-100');
+                hideScreen.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    hideScreen.classList.add('hidden');
+                    showScreen.classList.remove('hidden');
+                    
+                    if(overlayClassRemove && overlayClassAdd) {
+                        overlay.classList.remove(overlayClassRemove);
+                        overlay.classList.add(overlayClassAdd);
+                    }
+
+                    setTimeout(() => {
+                        showScreen.classList.remove('opacity-0');
+                        showScreen.classList.add('opacity-100');
+                    }, 50);
+                }, 500);
+            }
+
+            // 1. Klik Tombol Start (Intro -> Utama)
+            startBtn.addEventListener('click', () => {
+                // Play Audio HBD.mp3
+                if (!musicStarted) {
+                    bgMusic.volume = 0.8;
+                    bgMusic.play().catch(e => console.log("Gagal putar musik:", e));
+                    musicStarted = true;
+                }
+                
+                // Pastikan video berputar (tetap muted agar musik HBD.mp3 terdengar jelas)
+                bgVideo.play().catch(e => console.log("Video diblokir:", e));
+                
+                startFloatingHearts();
+                switchScreen(introScreen, mainScreen, 'bg-black/60', 'bg-black/40');
+            });
+
+            // 2. Klik Lihat Memori (Utama -> Galeri)
+            toGalleryBtn.addEventListener('click', () => {
+                // Gelapkan overlay agar teks/foto lebih mudah dibaca
+                switchScreen(mainScreen, galleryScreen, 'bg-black/40', 'bg-black/70');
+            });
+
+            // 3. Klik Kembali (Galeri -> Utama)
+            backBtn.addEventListener('click', () => {
+                switchScreen(galleryScreen, mainScreen, 'bg-black/70', 'bg-black/40');
+            });
+
+            // --- Efek Hati Berjatuhan (Floating Hearts) ---
+            function startFloatingHearts() {
+                const container = document.getElementById('hearts-container');
+                const hearts = ['❤️', '💖', '💕', '💗', '💓', '✨', '💍'];
+                
+                setInterval(() => {
+                    // Batasi jumlah maksimal hati di layar untuk HP yang speknya rendah
+                    if(container.childElementCount > 25) return; 
+
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                    
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    const size = Math.random() * 15 + 15; // 15px - 30px
+                    heart.style.fontSize = size + 'px';
+                    const duration = Math.random() * 3 + 5; // 5s - 8s (sedikit diperlambat)
+                    heart.style.animationDuration = duration + 's';
+                    
+                    container.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, duration * 1000);
+                }, 500); 
+            }
+        });
+    </script>
+</body>
+</html>
